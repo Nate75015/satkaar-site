@@ -12,9 +12,9 @@ export function Footer() {
     <footer className="bg-gris-70">
       {/* Main Footer Content */}
       <div className="container-oso py-8">
-        <div className="flex flex-col lg:flex-row items-start justify-center gap-12 lg:gap-[214px]">
+        <div className="flex flex-col lg:flex-row items-start justify-center gap-12 lg:justify-between">
           {/* Logo & Description */}
-          <div className="flex flex-col items-center lg:items-start gap-4 w-full lg:w-[335px]">
+          <div className="flex flex-col items-center gap-4 w-full ">
             <Logo variant="white" />
             <p className="text-base text-white text-center lg:text-center leading-relaxed">
               La gestion de documents simplifiée par l&apos;IA
@@ -26,16 +26,16 @@ export function Footer() {
           </div>
 
           {/* Products Links */}
-          <div className="flex flex-col items-center lg:items-center gap-6 w-full lg:w-[172px]">
+          <div className="flex flex-col items-center lg:items-center gap-6 w-full ">
             <h3 className="font-heading font-semibold text-lg text-white">
               Produits
             </h3>
-            <ul className="flex flex-col items-center gap-2.5">
+            <ul className="flex flex-col items-center justify-center gap-2.5">
               {footerLinks.produits.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-base text-white underline hover:text-gris-20 transition-colors"
+                    className="text-base text-center text-white underline hover:text-gris-20 transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -45,11 +45,11 @@ export function Footer() {
           </div>
 
           {/* Legal Links */}
-          <div className="flex flex-col items-center lg:items-center gap-6">
+          <div className="flex flex-col items-center lg:items-center gap-6 w-full">
             <h3 className="font-heading font-semibold text-lg text-white">
-              Légal
+              Légal 
             </h3>
-            <ul className="flex flex-col items-center gap-2.5">
+            <ul className="flex flex-col items-center justify-center gap-2.5">
               {footerLinks.legal.map((link) => (
                 <li key={link.href}>
                   <Link
