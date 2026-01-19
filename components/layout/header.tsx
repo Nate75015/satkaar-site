@@ -26,7 +26,7 @@ export function Header() {
       <div className="container-oso">
         <div className="flex items-center justify-between h-[100px]">
           {/* Logo */}
-          <Logo />
+          <Logo className="w-[148px] h-[42px]" />
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
