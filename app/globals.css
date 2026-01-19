@@ -1,0 +1,295 @@
+@import "tailwindcss";
+
+/* ============================================
+   O.S.O Design System - Tailwind v4 Theme
+   ============================================ */
+
+@theme {
+  /* -------------------------
+     Colors - Primary (Bleu)
+     ------------------------- */
+  --color-bleu-50: #D5E7FE;
+  --color-bleu-100: #81B7FD;
+  --color-bleu-200: #2E87FB;
+  --color-bleu-300: #045DD0;
+  --color-bleu-400: #034AA6;
+
+  /* -------------------------
+     Colors - Secondary (Rose)
+     ------------------------- */
+  --color-rose-10: #F6CCD7;
+  --color-rose-200: #EC98AE;
+  --color-rose-300: #E36586;
+  --color-rose-500: #D9325E;
+  --color-rose-900: #71152D;
+
+  /* -------------------------
+     Colors - Vert (Green)
+     ------------------------- */
+  --color-vert-50: #CBF1EA;
+  --color-vert-100: #96E2D5;
+  --color-vert-400: #34BFA6;
+  --color-vert-500: #2DA791;
+
+  /* -------------------------
+     Colors - Jaune (Yellow)
+     ------------------------- */
+  --color-jaune-10: #fef3e1;
+  --color-jaune-40: #f9c266;
+
+  /* -------------------------
+     Colors - Bleu Light
+     ------------------------- */
+  --color-bleu-light-100: #C0E7F8;
+  --color-bleu-light-300: #6CC6ED;
+
+  /* -------------------------
+     Colors - Gris (Grey)
+     ------------------------- */
+  --color-gris-10: #f5f5f4;
+  --color-gris-20: #c0c0c0;
+  --color-gris-40: #828282;
+  --color-gris-60: #2c2c2c;
+  --color-gris-70: #242424;
+  --color-gris-80: #1b1b1b;
+
+  /* -------------------------
+     Semantic Colors
+     ------------------------- */
+  --color-background: #ffffff;
+  --color-foreground: #242424;
+  --color-primary: #2E87FB;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #E36586;
+  --color-secondary-foreground: #ffffff;
+  --color-muted: #f5f5f4;
+  --color-muted-foreground: #828282;
+  --color-accent: #34BFA6;
+  --color-accent-foreground: #ffffff;
+  --color-border: #c0c0c0;
+  --color-input: #c0c0c0;
+  --color-ring: #2E87FB;
+
+  /* -------------------------
+     Typography
+     ------------------------- */
+  --font-heading: "Barlow Semi Condensed", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
+
+  /* -------------------------
+     Border Radius
+     ------------------------- */
+  --radius-oso-xs: 8px;
+  --radius-oso-s: 16px;
+  --radius-oso-m: 24px;
+  --radius-oso-l: 32px;
+  --radius-oso-full: 9999px;
+
+  /* -------------------------
+     Shadows
+     ------------------------- */
+  --shadow-header: 0px 1px 2px 0px rgba(0, 0, 0, 0.25);
+  --shadow-card: 0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-card-hover: 0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1);
+
+  /* -------------------------
+     Animations
+     ------------------------- */
+  --animate-fade-in: fade-in 0.5s ease-out;
+  --animate-slide-up: slide-up 0.5s ease-out;
+  --animate-slide-down: slide-down 0.3s ease-out;
+}
+
+/* ============================================
+   Custom Spacing Utilities
+   ============================================ */
+
+@utility spacing-oso-null {
+  --spacing-value: 0px;
+}
+
+@utility spacing-oso-xxs {
+  --spacing-value: 4px;
+}
+
+@utility spacing-oso-xs {
+  --spacing-value: 8px;
+}
+
+@utility spacing-oso-s {
+  --spacing-value: 16px;
+}
+
+@utility spacing-oso-m {
+  --spacing-value: 24px;
+}
+
+@utility spacing-oso-l {
+  --spacing-value: 32px;
+}
+
+@utility spacing-oso-xl {
+  --spacing-value: 48px;
+}
+
+@utility spacing-oso-xxl {
+  --spacing-value: 64px;
+}
+
+/* ============================================
+   Animation Keyframes
+   ============================================ */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  h1 {
+    font-size: 48px;
+    font-weight: 700;
+  }
+
+  h2 {
+    font-size: 39px;
+  }
+
+  h3 {
+    font-size: 31px;
+  }
+
+  h4 {
+    font-size: 25px;
+    font-weight: 500;
+  }
+
+  h5 {
+    font-size: 24px;
+  }
+
+  h6 {
+    font-size: 18px;
+  }
+
+  p {
+    line-height: 1.6;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* ============================================
+   Component Layer
+   ============================================ */
+
+@layer components {
+  /* Container */
+  .container-oso {
+    width: 100%;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  @media (min-width: 640px) {
+    .container-oso {
+      padding-left: 32px;
+      padding-right: 32px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-oso {
+      padding-left: 80px;
+      padding-right: 80px;
+    }
+  }
+
+  /* Section spacing */
+  .section-oso {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+
+  @media (min-width: 768px) {
+    .section-oso {
+      padding-top: 64px;
+      padding-bottom: 64px;
+    }
+  }
+
+  /* Gradient text */
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-bleu-200), var(--color-rose-300));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
