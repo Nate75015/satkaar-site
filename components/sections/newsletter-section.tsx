@@ -6,11 +6,12 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChevronDown, Square } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // Figma phone mockup asset
 const phoneMockup = "https://www.figma.com/api/mcp/asset/991f759f-c8fd-4b90-802d-fff4389662d8";
 
-export function NewsletterSection() {
+export function NewsletterSection({ bgColor = "bg-white" }: { bgColor?: string }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -26,7 +27,7 @@ export function NewsletterSection() {
   };
 
   return (
-    <section className="py-16 lg:py-24 bg-white">
+    <section className={cn("py-16 lg:py-24", bgColor)}>
       <div className="container-oso">
         <motion.div
           className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-[150px]"

@@ -1,233 +1,401 @@
-import { Metadata } from "next";
-import Image from "next/image";
-import { Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { NewsletterSection } from "@/components/sections/newsletter-section";
-import { cn } from "@/lib/utils";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Fonctionnalités",
-  description: "Découvrez toutes les fonctionnalités d'O.S.O : scan intelligent, tri automatique, coffre-fort numérique, rappels et plus encore.",
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { NewsletterSection } from "@/components/sections/newsletter-section";
+
+// Animation variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" as const }
+  }
 };
 
-// Placeholder mockup images (using the mockups we have)
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1
+    }
+  }
+};
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: { 
+    opacity: 1, 
+    scale: 1,
+    transition: { duration: 0.5, ease: "easeOut" as const }
+  }
+};
+
+// SVG Check icon path
+const checkIconPath = "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z";
+
+// Phone mockup images
 const scanMockup = "/images/mockups/solution-mockup-1.png";
 const classementMockup = "/images/mockups/solution-mockup-2.png";
 const organisationMockup = "/images/mockups/solution-mockup-3.png";
 const partageMockup = "/images/mockups/hero-mockup.png";
 const rappelsMockup = "/images/mockups/newletter-mockup.png";
 
-interface Feature {
-  id: string;
-  number: string;
-  title: string;
-  highlightColor: string;
-  subtitle: string;
-  description: string;
-  features: string[];
-  mockup: string;
-  bgColor: string;
-  position: "left" | "right";
+// User type images - using available images from public/images
+const userTypeImages = {
+  independants: "/images/independent-worker.jpg",
+  freelances: "/images/freelance-worker.jpg",
+  etudiants: "/images/student-worker.jpg",
+  seniors: "/images/veteran-worker.jpg",
+  famille: "/images/happy-family.jpg",
+};
+
+function HeroSection() {
+  return (
+    <section className="bg-[#d5e7fe] pt-12 pb-24">
+      <motion.div 
+        className="max-w-[945px] mx-auto px-4 flex flex-col items-center gap-6 text-center"
+        initial="hidden"
+        animate="visible"
+        variants={staggerContainer}
+      >
+        <motion.h1 
+          className="text-[39px] md:text-[48px] font-heading font-bold text-[#242424] leading-tight"
+          variants={fadeInUp}
+        >
+          Tout ce qu'il faut pour gérer ses documents.
+          <br />
+          Rien de superflu.
+        </motion.h1>
+        <motion.p 
+          className="text-xl md:text-2xl font-heading font-medium text-black max-w-[576px]"
+          variants={fadeInUp}
+        >
+          O.S.O combine simplicité, intelligence et sécurité pour vous faire gagner du temps au quotidien.
+        </motion.p>
+        <motion.button 
+          className="bg-[#2e87fb] text-white px-6 py-4 rounded-2xl text-base font-semibold hover:bg-[#2573d9] transition-colors mt-6"
+          variants={fadeInUp}
+        >
+          Télécharger l'app
+        </motion.button>
+      </motion.div>
+    </section>
+  );
 }
 
-const features: Feature[] = [
-  {
-    id: "scan",
-    number: "01",
-    title: "Scan & Import",
-    highlightColor: "text-bleu-200",
-    subtitle: "Scannez ou importez vos documents en quelques secondes",
-    description: "Que ce soit une facture, un contrat ou une ordonnance, O.S.O capture et numérise tout.",
-    features: [
-      "Scan depuis le téléphone",
-      "Import depuis les fichiers ou le cloud",
-      "Formats acceptés : PDF, images",
-    ],
-    mockup: scanMockup,
-    bgColor: "bg-bleu-light-100",
-    position: "left",
-  },
-  {
-    id: "classement",
-    number: "02",
-    title: "Classement intelligent",
-    highlightColor: "text-vert-400",
-    subtitle: "O.S.O classe vos documents pour vous",
-    description: "Grâce à une technologie avancée de lecture OCR, O.S.O analyse et trie automatiquement vos documents.",
-    features: [
-      "Reconnaissance automatique",
-      "Classement par catégorie",
-    ],
-    mockup: classementMockup,
-    bgColor: "bg-white",
-    position: "right",
-  },
-  {
-    id: "organisation",
-    number: "03",
-    title: "Organisation claire & recherche simple",
-    highlightColor: "text-rose-300",
-    subtitle: "Retrouvez n'importe quel document, instantanément",
-    description: "Vos documents sont organisés par catégorie, par date ou par type, vous permettant une recherche rapide.",
-    features: [
-      "Organisation personnalisable",
-      "Recherche par mots-clés",
-      "Accès rapide aux favoris",
-    ],
-    mockup: organisationMockup,
-    bgColor: "bg-bleu-light-100",
-    position: "left",
-  },
-  {
-    id: "partage",
-    number: "04",
-    title: "Partage maîtrisé",
-    highlightColor: "text-jaune-40",
-    subtitle: "Partagez le bon document, sans erreur",
-    description: "Envoyez un document par e-mail, WhatsApp ou téléchargez-le pour vos démarches en quelques clics.",
-    features: [
-      "Partage sécurisé",
-      "Historique des envois",
-      "Accès par lien",
-    ],
-    mockup: partageMockup,
-    bgColor: "bg-white",
-    position: "right",
-  },
-  {
-    id: "rappels",
-    number: "05",
-    title: "Rappels & échéances",
-    highlightColor: "text-bleu-200",
-    subtitle: "Ne ratez plus jamais vos échéances importantes",
-    description: "O.S.O analyse vos documents et détecte automatiquement les dates d'échéance.",
-    features: [
-      "Notifications intelligentes",
-      "Rappels personnalisables",
-    ],
-    mockup: rappelsMockup,
-    bgColor: "bg-bleu-light-100",
-    position: "left",
-  },
-];
+interface FeatureCardProps {
+  number: string;
+  title: string;
+  description: {
+    title: string;
+    subtitle: string;
+  };
+  details: string[];
+  image: string;
+  imagePosition?: 'left' | 'right';
+  bgColor: string;
+  accentColor: string;
+  iconBgColor: string;
+}
 
-const targetProfiles = [
-  { label: "Indépendants", icon: "💼" },
-  { label: "Freelances", icon: "💻" },
-  { label: "Étudiants", icon: "📚" },
-  { label: "Seniors", icon: "👴" },
-  { label: "Famille", icon: "👨‍👩‍👧‍👦" },
-];
+function FeatureCard({ 
+  number, 
+  title, 
+  description, 
+  details, 
+  image, 
+  imagePosition = 'right', 
+  bgColor, 
+  accentColor,
+  iconBgColor
+}: FeatureCardProps) {
+  const content = (
+    <motion.div 
+      className="flex-1 max-w-[599px]"
+      variants={fadeInUp}
+    >
+      <div className="flex items-center gap-4 mb-11">
+        <div 
+          className="w-20 h-20 rounded-lg flex items-center justify-center"
+          style={{ backgroundColor: iconBgColor }}
+        >
+          {/* Icon placeholder - can be replaced with actual icons */}
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+            <path d={checkIconPath} fill={accentColor} />
+          </svg>
+        </div>
+        <div>
+          <p 
+            className="text-2xl font-heading font-medium"
+            style={{ color: accentColor }}
+          >
+            /{number}
+          </p>
+          <h2 
+            className="text-[31px] md:text-[39px] font-heading font-semibold leading-tight"
+            style={{ color: accentColor }}
+          >
+            {title}
+          </h2>
+        </div>
+      </div>
+      
+      <div className="space-y-6">
+        <div>
+          <h3 className="text-xl md:text-2xl font-heading font-bold text-[#242424] mb-3">
+            {description.title}
+          </h3>
+          <p className="text-base text-[#474747]">
+            {description.subtitle}
+          </p>
+        </div>
+        
+        <div className="space-y-4">
+          {details.map((detail: string, idx: number) => (
+            <motion.div 
+              key={idx} 
+              className="flex items-start gap-2"
+              variants={fadeInUp}
+            >
+              <svg className="w-6 h-6 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24">
+                <path d={checkIconPath} fill={accentColor} />
+              </svg>
+              <p className="text-base text-gris-80">{detail}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+
+  const visual = (
+    <motion.div 
+      className="relative shrink-0"
+      variants={scaleIn}
+    >
+      <div className="relative">
+        {/* Background shape */}
+        <div 
+          className="w-[400px] md:w-[525px] h-[350px] md:h-[400px] rounded-3xl opacity-15"
+          style={{ backgroundColor: bgColor }}
+        />
+        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+          {/* Circle backgrounds */}
+          <svg className="absolute w-[300px] md:w-[422px] h-[300px] md:h-[422px]" viewBox="0 0 422 422" fill="none">
+            <circle cx="211" cy="211" r="211" fill={bgColor} opacity="0.1" />
+            <circle cx="211" cy="211" r="194" fill={bgColor} opacity="0.2" />
+            <circle cx="211" cy="211" r="174" fill={bgColor} opacity="0.3" />
+          </svg>
+          {/* Phone mockup */}
+          <div className="relative z-10 w-[200px] md:w-[280px] h-[400px] md:h-[560px]">
+            <Image
+              src={image}
+              alt={title}
+              fill
+              sizes="(max-width: 768px) 200px, 280px"
+              className="object-contain"
+            />
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+
+  return (
+    <motion.div 
+      className="flex flex-col lg:flex-row items-center gap-10 lg:gap-[103px] w-full max-w-[1227px] mx-auto px-4"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      variants={staggerContainer}
+    >
+      {imagePosition === 'left' ? (
+        <>
+          {visual}
+          {content}
+        </>
+      ) : (
+        <>
+          {content}
+          {visual}
+        </>
+      )}
+    </motion.div>
+  );
+}
+
+function FeaturesSection() {
+  return (
+    <section className="py-16 md:py-24">
+      <div className="space-y-[100px] md:space-y-[150px]">
+        {/* Feature 1: Scan & Import */}
+        <FeatureCard
+          number="01"
+          title="Scan & Import"
+          description={{
+            title: "Scannez ou importez vos documents en quelques secondes",
+            subtitle: "Importer un document ne devrait jamais être compliqué."
+          }}
+          details={[
+            "Scan depuis le téléphone",
+            "Import depuis les fichiers ou le cloud",
+            "Formats simples et courants"
+          ]}
+          image={scanMockup}
+          imagePosition="right"
+          bgColor="#81B7FD"
+          accentColor="#045DD0"
+          iconBgColor="#d5e7fe"
+        />
+
+        {/* Feature 2: Classement intelligent */}
+        <FeatureCard
+          number="02"
+          title="Classement intelligent"
+          description={{
+            title: "O.S.O classe vos documents pour vous",
+            subtitle: "Classer est chronophage et source d'erreurs."
+          }}
+          details={[
+            "O.S.O analyse le document, propose un nom et un dossier.",
+            "Vous validez, c'est terminé."
+          ]}
+          image={classementMockup}
+          imagePosition="left"
+          bgColor="#C0E7F8"
+          accentColor="#33B0E7"
+          iconBgColor="#eaf7fc"
+        />
+
+        {/* Feature 3: Organisation claire */}
+        <FeatureCard
+          number="03"
+          title="Organisation claire & recherche simple"
+          description={{
+            title: "Retrouvez n'importe quel document, instantanément",
+            subtitle: "On perd souvent du temps à chercher un document qu'on possède déjà."
+          }}
+          details={[
+            "Organisation claire",
+            "Documents bien identifiés",
+            "Accès rapide depuis le mobile"
+          ]}
+          image={organisationMockup}
+          imagePosition="right"
+          bgColor="#96E2D5"
+          accentColor="#34BFA6"
+          iconBgColor="#cbf1ea"
+        />
+
+        {/* Feature 4: Partage maîtrisé */}
+        <FeatureCard
+          number="04"
+          title="Partage maîtrisé"
+          description={{
+            title: "Partagez le bon document, sans erreur",
+            subtitle: "Envoyer un document au mauvais format ou à la mauvaise personne est risqué."
+          }}
+          details={[
+            "Partage simple",
+            "Documents bien nommés",
+            "Contrôle total"
+          ]}
+          image={partageMockup}
+          imagePosition="left"
+          bgColor="#F6CCD7"
+          accentColor="#D9325E"
+          iconBgColor="#f6ccd7"
+        />
+
+        {/* Feature 5: Rappels & échéances */}
+        <FeatureCard
+          number="05"
+          title="Rappels & échéances"
+          description={{
+            title: "Ne ratez plus jamais une échéance importante",
+            subtitle: "Dates limites, renouvellements, démarches oubliées."
+          }}
+          details={[
+            "O.S.O repère les échéances et vous rappelle au bon moment."
+          ]}
+          image={rappelsMockup}
+          imagePosition="right"
+          bgColor="#81B7FD"
+          accentColor="#045DD0"
+          iconBgColor="#d5e7fe"
+        />
+      </div>
+    </section>
+  );
+}
+
+function UserTypesSection() {
+  const userTypes = [
+    { name: "Indépendants", image: userTypeImages.independants },
+    { name: "Freelances", image: userTypeImages.freelances },
+    { name: "Etudiants", image: userTypeImages.etudiants },
+    { name: "Seniors", image: userTypeImages.seniors },
+    { name: "Famille", image: userTypeImages.famille }
+  ];
+
+  return (
+    <section className="py-16 md:py-24 bg-white">
+      <motion.div 
+        className="max-w-[1280px] mx-auto px-4 md:px-20"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={staggerContainer}
+      >
+        <motion.h2 
+          className="text-[31px] md:text-[39px] font-heading font-semibold text-center text-black mb-12 md:mb-16"
+          variants={fadeInUp}
+        >
+          Les mêmes fonctionnalités,
+          <br />
+          adaptées à chaque usage.
+        </motion.h2>
+        
+        <motion.div 
+          className="flex flex-wrap items-center justify-center gap-8 md:gap-[60px]"
+          variants={staggerContainer}
+        >
+          {userTypes.map((type, idx) => (
+            <motion.div 
+              key={idx} 
+              className="flex flex-col items-center gap-4 w-[140px] md:w-[180px]"
+              variants={scaleIn}
+            >
+              <div className="w-[140px] h-[140px] md:w-[180px] md:h-[180px] rounded-full overflow-hidden relative bg-gray-100">
+                <Image 
+                  src={type.image} 
+                  alt={type.name} 
+                  fill
+                  sizes="(max-width: 768px) 140px, 180px"
+                  className="object-cover"
+                />
+              </div>
+              <p className="text-base md:text-lg font-heading font-semibold text-gris-60 text-center">
+                {type.name}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}
 
 export default function FonctionnalitesPage() {
   return (
     <>
-      {/* Hero Section */}
-      <section className="bg-[#d5e7fe] py-24">
-        <div className="container-oso">
-          <div className="flex flex-col items-center gap-6 text-center max-w-[800px] mx-auto">
-            <h1 className="font-heading font-bold text-[36px] md:text-[48px] text-gris-70">
-              Tout ce qu'il faut pour gérer ses documents.
-              <br />
-              Rien de superflu.
-            </h1>
-            <p className="font-body text-base text-black">
-              O.S.O combine simplicité, intelligence et sécurité
-              <br />
-              pour vous faire gagner du temps au quotidien.
-            </p>
-            <Button size="lg">Télécharger l'app</Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Sections */}
-      {features.map((feature, index) => (
-        <section
-          key={feature.id}
-          className={cn("py-16 md:py-24", feature.bgColor)}
-        >
-          <div className="container-oso">
-            <div className={cn(
-              "flex flex-col lg:flex-row items-center gap-12",
-              feature.position === "right" && "lg:flex-row-reverse"
-            )}>
-              {/* Content */}
-              <div className="flex-1 flex flex-col gap-6">
-                <div className="flex items-center gap-3">
-                  <span className={cn("font-heading font-semibold text-[20px]", feature.highlightColor)}>
-                    {feature.number}
-                  </span>
-                  <h2 className={cn("font-heading font-semibold text-[28px] md:text-[35px]", feature.highlightColor)}>
-                    {feature.title}
-                  </h2>
-                </div>
-                
-                <div className="flex flex-col gap-4">
-                  <h3 className="font-heading font-semibold text-[18px] text-gris-70">
-                    {feature.subtitle}
-                  </h3>
-                  <p className="font-body text-base text-gris-70">
-                    {feature.description}
-                  </p>
-                </div>
-
-                <ul className="flex flex-col gap-3 mt-4">
-                  {feature.features.map((item, i) => (
-                    <li key={i} className="flex items-center gap-3">
-                      <Check className={cn("w-5 h-5", feature.highlightColor)} />
-                      <span className="font-body text-base text-gris-70">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Mockup */}
-              <div className={cn(
-                "relative w-full max-w-[400px] h-[400px] md:h-[500px] rounded-[24px] overflow-hidden",
-                feature.bgColor === "bg-white" ? "bg-gris-10" : "bg-white"
-              )}>
-                <Image
-                  src={feature.mockup}
-                  alt={feature.title}
-                  fill
-                  className="object-contain p-4"
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-      ))}
-
-      {/* Target Profiles Section */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="container-oso">
-          <div className="flex flex-col items-center gap-12">
-            <div className="flex flex-col items-center gap-4 text-center">
-              <h2 className="font-heading font-semibold text-[32px] md:text-[39px] text-black">
-                Les mêmes fonctionnalités,
-                <br />
-                adaptées à chaque usage.
-              </h2>
-            </div>
-
-            <div className="flex flex-wrap justify-center gap-8 md:gap-16">
-              {targetProfiles.map((profile, index) => (
-                <div key={index} className="flex flex-col items-center gap-4">
-                  <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px] rounded-full bg-bleu-light-100 flex items-center justify-center text-4xl">
-                    {profile.icon}
-                  </div>
-                  <p className="font-heading font-medium text-[18px] text-gris-60">
-                    {profile.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Newsletter Section */}
+      <HeroSection />
+      <FeaturesSection />
+      <UserTypesSection />
       <NewsletterSection />
     </>
   );

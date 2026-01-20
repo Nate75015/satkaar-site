@@ -1,24 +1,30 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
+import { JSX, useState, useRef, useEffect, useCallback } from "react";
+import Image, { StaticImageData } from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AppStoreBadges } from "@/components/common/app-store-badges";
 import { NewsletterSection } from "@/components/sections/newsletter-section";
 import { cn } from "@/lib/utils";
+import { FamilyIcon, FreelanceIcon, IndependentIcon, SeniorsIcon, StudentIcon } from "@/public/images/icons/icons";
 
 // Figma assets
-const independantImg = "https://www.figma.com/api/mcp/asset/6778b1cd-9c82-403f-9f2d-e6d954d07cd8";
-const freelanceImg = "https://www.figma.com/api/mcp/asset/94424e5e-bd10-4780-8e06-f43dd0a6ac01";
-const etudiantsImg = "https://www.figma.com/api/mcp/asset/09047e2e-ea33-4356-9db0-af74e0343fbd";
-const seniorsImg = "https://www.figma.com/api/mcp/asset/b6b2839b-230c-4ed3-8602-78f32e8a98fa";
-const famillesImg = "https://www.figma.com/api/mcp/asset/715767b0-f4ce-4373-80f4-9e6060743df3";
-const scanIcon = "https://www.figma.com/api/mcp/asset/ef05c34e-bb6d-4f48-8dc9-a8982516fffb";
-const triIcon = "https://www.figma.com/api/mcp/asset/d3e7430d-ffda-4764-9753-3c88cdd96af7";
-const partageIcon = "https://www.figma.com/api/mcp/asset/3d8f9342-6269-478a-abbf-438066ac0292";
-const rappelsIcon = "https://www.figma.com/api/mcp/asset/536df6d6-9ef2-4a40-abcf-87295720c6c2";
+import independantImg from "@/public/images/independent-worker.jpg";
+import freelanceImg from "@/public/images/freelance-worker.jpg";
+import etudiantsImg from "@/public/images/student-worker.jpg";
+import seniorsImg from "@/public/images/veteran-worker.jpg";
+import famillesImg from "@/public/images/happy-family.jpg";
+import scanIcon from "@/public/images/icons/scanner-bold-icon.svg";
+import triIcon from "@/public/images/icons/sort-bold-icon.svg";
+import partageIcon from "@/public/images/icons/users-bold-icon.svg";
+import rappelsIcon from "@/public/images/icons/bell-bold-icon.svg";
+import ProcessIconsStep from "@/components/sections/process-icons-step";
+import doubleCheckGreenIcon from "@/public/images/icons/double-check-green.svg";
+import doubleCheckRedIcon from "@/public/images/icons/double-check-red.svg";
+import doubleCheckBlueIcon from "@/public/images/icons/double-check-blue.svg";
+const arrowIcon = "https://www.figma.com/api/mcp/asset/5d605a0a-811b-4c51-8af5-c3b5b1e34836";
 
 interface ProfileTab {
   id: string;
@@ -29,7 +35,9 @@ interface ProfileTab {
   description: string;
   features: { title: string; description: string }[];
   benefits: string[];
-  image: string;
+  image: StaticImageData;
+  icon: typeof IndependentIcon;
+  doubleCheckIcon: typeof doubleCheckGreenIcon;
   ctaText: string;
   ctaVariant: "default" | "outline" | "rose";
 }
@@ -49,6 +57,8 @@ const profileTabs: ProfileTab[] = [
     ],
     benefits: ["Classement automatique", "Documents accessibles partout", "Zéro stress administratif"],
     image: independantImg,
+    icon: IndependentIcon,
+    doubleCheckIcon: doubleCheckBlueIcon,
     ctaText: "Télécharger l'app",
     ctaVariant: "default",
   },
@@ -66,6 +76,8 @@ const profileTabs: ProfileTab[] = [
     ],
     benefits: ["Gain de temps", "Image professionnelle", "Organisation fluide"],
     image: freelanceImg,
+    icon: FreelanceIcon,
+    doubleCheckIcon: doubleCheckRedIcon,
     ctaText: "Simplifier ma gestion documentaire",
     ctaVariant: "rose",
   },
@@ -83,6 +95,8 @@ const profileTabs: ProfileTab[] = [
     ],
     benefits: ["Organisation centralisée", "Gain de temps", "Moins de charge mentale"],
     image: famillesImg,
+    icon: FamilyIcon,
+    doubleCheckIcon: doubleCheckGreenIcon,
     ctaText: "Organiser mes documents",
     ctaVariant: "outline",
   },
@@ -100,6 +114,8 @@ const profileTabs: ProfileTab[] = [
     ],
     benefits: ["Interface claire", "Accompagnement pas à pas", "Sérénité au quotidien"],
     image: seniorsImg,
+    icon: SeniorsIcon,
+    doubleCheckIcon: doubleCheckRedIcon,
     ctaText: "Découvrir une solution simple",
     ctaVariant: "outline",
   },
@@ -117,6 +133,8 @@ const profileTabs: ProfileTab[] = [
     ],
     benefits: ["Tous les documents étudiants au même endroit", "Accès facile depuis le téléphone", "Moins de stress pendant les périodes clés (rentrée, examens, stages)"],
     image: etudiantsImg,
+    icon: StudentIcon,
+    doubleCheckIcon: doubleCheckGreenIcon,
     ctaText: "Organiser mes documents étudiants",
     ctaVariant: "outline",
   },
@@ -132,6 +150,81 @@ const processSteps = [
 export default function PourQuiPage() {
   const [activeTab, setActiveTab] = useState("independant");
   const activeProfile = profileTabs.find((tab) => tab.id === activeTab) || profileTabs[0];
+  
+  // Refs for scrollable tabs
+  const tabsContainerRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  
+  // Drag scroll state
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  // Scroll to center the active tab
+  const scrollToTab = useCallback((tabId: string) => {
+    const container = tabsContainerRef.current;
+    const tabElement = tabRefs.current.get(tabId);
+    
+    if (container && tabElement) {
+      const containerRect = container.getBoundingClientRect();
+      const tabRect = tabElement.getBoundingClientRect();
+      
+      // Calculate the scroll position to center the tab
+      const tabCenter = tabRect.left + tabRect.width / 2;
+      const containerCenter = containerRect.left + containerRect.width / 2;
+      const scrollOffset = tabCenter - containerCenter;
+      
+      container.scrollBy({
+        left: scrollOffset,
+        behavior: "smooth",
+      });
+    }
+  }, []);
+
+  // Handle tab click
+  const handleTabClick = (tabId: string) => {
+    setActiveTab(tabId);
+    scrollToTab(tabId);
+  };
+
+  // Drag to scroll handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    const container = tabsContainerRef.current;
+    if (!container) return;
+    
+    setIsDragging(true);
+    setStartX(e.pageX - container.offsetLeft);
+    setScrollLeft(container.scrollLeft);
+    container.style.cursor = "grabbing";
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    
+    const container = tabsContainerRef.current;
+    if (!container) return;
+    
+    const x = e.pageX - container.offsetLeft;
+    const walk = (x - startX) * 1.5; // Scroll speed multiplier
+    container.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    if (tabsContainerRef.current) {
+      tabsContainerRef.current.style.cursor = "grab";
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (isDragging) {
+      setIsDragging(false);
+      if (tabsContainerRef.current) {
+        tabsContainerRef.current.style.cursor = "grab";
+      }
+    }
+  };
 
   return (
     <>
@@ -156,19 +249,33 @@ export default function PourQuiPage() {
       <section className="py-16 md:py-24 bg-white">
         <div className="container-oso">
           {/* Tabs */}
-          <div className="flex flex-wrap justify-center gap-4 mb-12 bg-gris-10 border border-gris-20 rounded-[16px] p-2">
+          <div
+            ref={tabsContainerRef}
+            className={cn(
+              "flex overflow-x-auto gap-4 mb-12 bg-gris-10 border border-gris-20 rounded-oso-s p-2 scrollbar-hide cursor-grab select-none",
+              isDragging && "cursor-grabbing"
+            )}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+          >
             {profileTabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                ref={(el) => {
+                  if (el) tabRefs.current.set(tab.id, el);
+                }}
+                onClick={() => !isDragging && handleTabClick(tab.id)}
                 className={cn(
-                  "px-4 py-2 rounded-[16px] font-body text-lg transition-all flex items-center gap-2",
+                  "px-4 py-2 rounded-oso-s font-body text-lg transition-all flex items-center gap-2 shrink-0 whitespace-nowrap",
                   activeTab === tab.id
                     ? "bg-bleu-200 text-white font-bold"
                     : "text-gris-60 hover:bg-gris-20"
                 )}
               >
-                {tab.label}
+                <tab.icon color={activeTab === tab.id ? "white" : "#474747"} />
+                <span className="text-base">{tab.label}</span>
               </button>
             ))}
           </div>
@@ -207,12 +314,7 @@ export default function PourQuiPage() {
                     {activeProfile.features.map((feature, index) => (
                       <div key={index} className="flex flex-col gap-2">
                         <div className="flex items-center gap-2">
-                          <Check className={cn(
-                            "w-5 h-5",
-                            activeProfile.id === "independant" ? "text-bleu-200" :
-                            activeProfile.id === "freelances" || activeProfile.id === "seniors" ? "text-rose-300" :
-                            "text-vert-400"
-                          )} />
+                          <Image src={activeProfile.doubleCheckIcon} alt="Double Check" width={24} height={24} />
                           <h4 className="font-body font-semibold text-base text-black">
                             {feature.title}
                           </h4>
@@ -267,48 +369,10 @@ export default function PourQuiPage() {
       </section>
 
       {/* Process Section */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="container-oso">
-          <div className="flex flex-col items-center gap-8">
-            <div className="flex flex-col items-center gap-8 text-center max-w-[532px]">
-              <h2 className="font-heading font-semibold text-[32px] md:text-[39px] text-black">
-                Un seul outil. Tous vos documents.
-              </h2>
-              <p className="font-body text-base text-black">
-                Quel que soit votre profil, O.S.O s'adapte à vous.
-              </p>
-            </div>
-
-            <p className="font-heading font-medium text-[20px] md:text-[25px] text-gris-70 text-center">
-              Scan → Tri → Partage → Rappels intelligents
-            </p>
-
-            {/* Process Icons */}
-            <div className="flex flex-wrap justify-center gap-8 md:gap-4 w-full max-w-[1103px]">
-              {processSteps.map((step, index) => (
-                <div key={index} className="flex flex-col items-center gap-6">
-                  <div className="w-[120px] h-[120px] md:w-[160px] md:h-[160px] rounded-full bg-bleu-light-100 flex items-center justify-center">
-                    <Image
-                      src={step.icon}
-                      alt={step.label}
-                      width={54}
-                      height={54}
-                      className="w-[40px] h-[40px] md:w-[54px] md:h-[54px]"
-                      unoptimized
-                    />
-                  </div>
-                  <p className="font-heading font-medium text-[18px] md:text-[25px] text-gris-60 text-center">
-                    {step.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <ProcessIconsStep processSteps={processSteps} arrowIcon={arrowIcon} title="Un seul outil. Tous vos documents." description="Quel que soit votre profil, O.S.O s'adapte à vous." subtitle="Scan → Tri → Partage → Rappels intelligents" flow="Scan → Tri → Partage → Rappels intelligents" />
 
       {/* Newsletter Section */}
-      <NewsletterSection />
+      <NewsletterSection bgColor="bg-bleu-50" />
     </>
   );
 }

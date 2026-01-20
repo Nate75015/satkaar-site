@@ -11,16 +11,20 @@ export const metadata: Metadata = {
 };
 
 // Figma assets
-const scanIcon = "https://www.figma.com/api/mcp/asset/51e238b6-8de8-4c18-87a3-03fd85b40c32";
-const triIcon = "https://www.figma.com/api/mcp/asset/cb436f90-5763-410c-86dc-2e87b3e76b09";
-const partageIcon = "https://www.figma.com/api/mcp/asset/0d8f890a-c58d-4589-ace7-9bf14cf16021";
+import scanIcon from "@/public/images/icons/scanner-bold-icon.svg";
+import triIcon from "@/public/images/icons/sort-bold-icon.svg";
+import partageIcon from "@/public/images/icons/users-bold-icon.svg";
 const arrowIcon = "https://www.figma.com/api/mcp/asset/5d605a0a-811b-4c51-8af5-c3b5b1e34836";
-const shieldIcon = "https://www.figma.com/api/mcp/asset/7164c614-2d9c-484c-8250-d59e960b8370";
-const settingsIcon = "https://www.figma.com/api/mcp/asset/24d4c3b0-0a0f-44a8-82a0-27a7f79d98e8";
-const rgpdIcon = "https://www.figma.com/api/mcp/asset/bc65d416-9959-43af-b69b-621f245102a5";
-const verifiedIcon = "https://www.figma.com/api/mcp/asset/2e28cb32-7652-4872-9703-635e593602f3";
 const phoneMockup1 = "https://www.figma.com/api/mcp/asset/d9d6e3ba-efb4-41d9-a8cd-72be50946c7f";
 const phoneMockup2 = "https://www.figma.com/api/mcp/asset/e6bc5e10-0bbc-419b-af97-6a9247832bca";
+
+// Features icons
+import shieldLockIcon from "@/public/images/icons/shield-lock-icon.svg";
+import controlIcon from "@/public/images/icons/settings-icon.svg";
+import rgpdIcon from "@/public/images/icons/shield-check-icon.svg";
+import verifiedIcon from "@/public/images/icons/verified-icon.svg";
+import { SecuritySection } from "@/components/sections";
+import ProcessIconsStep from "@/components/sections/process-icons-step";
 
 const processSteps = [
   {
@@ -66,22 +70,35 @@ const stepCards = [
 
 const securityFeatures = [
   {
-    icon: shieldIcon,
-    label: "Données sécurisées",
+    id: "secure",
+    icon: shieldLockIcon,
+    title: "Données sécurisées",
+    width: 60,
+    height: 60,
   },
   {
-    icon: settingsIcon,
-    label: "Accès protégé",
+    id: "control",
+    icon: controlIcon,
+    title: "Accès protégé",
+    width: 50,
+    height: 60,
   },
   {
+    id: "rgpd",
     icon: rgpdIcon,
-    label: "Conformité RGPD",
+    title: "Conformité RGPD",
+    width: 54,
+    height: 60,
   },
   {
+    id: "transparent",
     icon: verifiedIcon,
-    label: "Aucune validation automatique",
+    title: "Transparence et engagement",
+    width: 60,
+    height: 60,
   },
 ];
+
 
 export default function CommentCaMarchePage() {
   return (
@@ -110,68 +127,14 @@ export default function CommentCaMarchePage() {
       </section>
 
       {/* Process Flow Section */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="container-oso">
-          <div className="flex flex-col items-center gap-8">
-            <h2 className="font-heading font-semibold text-[32px] md:text-[39px] text-black text-center">
-              Une logique claire. Zéro effort inutile.
-            </h2>
-            <p className="font-body text-base text-black text-center">
-              Pas besoin de réfléchir, ni de savoir où classer quoi. O.S.O suit toujours la même logique :
-            </p>
-            
-            {/* Flow: Scan → Tri → Partage */}
-            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 mt-8">
-              <p className="font-heading font-medium text-[20px] md:text-[25px] text-gris-70">
-                Scan → Tri → Partage
-              </p>
-            </div>
-
-            {/* Process Icons */}
-            <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 w-full max-w-[1024px] mt-8">
-              {processSteps.map((step, index) => (
-                <div key={index} className="flex items-center gap-4 md:gap-8">
-                  <div className="flex flex-col items-center gap-6">
-                    <div className="w-[120px] h-[120px] md:w-[160px] md:h-[160px] rounded-full bg-bleu-light-100 flex items-center justify-center">
-                      <Image
-                        src={step.icon}
-                        alt={step.label}
-                        width={54}
-                        height={54}
-                        className="w-[40px] h-[40px] md:w-[54px] md:h-[54px]"
-                        unoptimized
-                      />
-                    </div>
-                    <p className="font-heading font-medium text-[18px] md:text-[25px] text-gris-60 text-center">
-                      {step.label}
-                    </p>
-                  </div>
-                  {index < processSteps.length - 1 && (
-                    <div className="hidden md:block w-[100px] lg:w-[166px]">
-                      <Image
-                        src={arrowIcon}
-                        alt="Arrow"
-                        width={167}
-                        height={37}
-                        className="w-full"
-                        unoptimized
-                      />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            <p className="font-body text-base text-black text-center mt-8">
-              Et à chaque étape, vous gardez le contrôle.
-            </p>
-          </div>
-        </div>
-      </section>
+      <ProcessIconsStep processSteps={processSteps} arrowIcon={arrowIcon} title="Une logique claire. Zéro effort inutile." description="Pas besoin de réfléchir, ni de savoir où classer quoi. O.S.O suit toujours la même logique :" subtitle="Et à chaque étape, vous gardez le contrôle." flow="Scan → Tri → Partage" />
 
       {/* Step Cards Section */}
       <section className="py-16 md:py-24 bg-white">
         <div className="container-oso">
+          <p className="font-body text-base text-black text-center mb-20">
+            Et à chaque étape, vous gardez le contrôle.
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
             {stepCards.map((card, index) => (
               <div
@@ -195,41 +158,7 @@ export default function CommentCaMarchePage() {
       </section>
 
       {/* Security Section */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="container-oso">
-          <div className="flex flex-col items-center gap-8">
-            <div className="flex flex-col items-center gap-4 max-w-[548px] text-center">
-              <h2 className="font-heading font-semibold text-[32px] md:text-[39px] text-gris-70">
-                Vos documents vous appartiennent. Toujours.
-              </h2>
-              <p className="font-body text-base text-gris-70">
-                La gestion de documents demande de la confiance.
-                <br />
-                C'est pourquoi O.S.O a été conçu pour respecter votre contrôle et votre vie privée.
-              </p>
-            </div>
-
-            {/* Security Features */}
-            <div className="flex flex-wrap justify-center gap-12 md:gap-24 mt-8">
-              {securityFeatures.map((feature, index) => (
-                <div key={index} className="flex flex-col items-center gap-4 w-[120px] md:w-[144px]">
-                  <Image
-                    src={feature.icon}
-                    alt={feature.label}
-                    width={60}
-                    height={60}
-                    className="w-[50px] h-[50px] md:w-[60px] md:h-[60px]"
-                    unoptimized
-                  />
-                  <p className="font-heading font-semibold text-[16px] md:text-[18px] text-gris-70 text-center">
-                    {feature.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <SecuritySection securityFeatures={securityFeatures} title={<span>Vos documents vous <br /> appartiennent. Toujours.</span>} description="La gestion de documents demande de la confiance. C'est pourquoi O.S.O a été conçu pour respecter votre contrôle et votre vie privée." />
 
       {/* Target Audience Section - Reuse from home */}
       <TargetAudienceSection />

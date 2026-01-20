@@ -3,42 +3,17 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-// Figma assets
-import shieldLockIcon from "@/public/images/icons/shield-lock-icon.svg";
-import controlIcon from "@/public/images/icons/settings-icon.svg";
-import rgpdIcon from "@/public/images/icons/shield-check-icon.svg";
-import verifiedIcon from "@/public/images/icons/verified-icon.svg";
-
-const securityFeatures = [
-  {
-    id: "secure",
-    icon: shieldLockIcon,
-    title: "Données sécurisées",
-    width: 60,
-    height: 60,
-  },
-  {
-    id: "control",
-    icon: controlIcon,
-    title: "Contrôle total",
-    width: 50,
-    height: 60,
-  },
-  {
-    id: "rgpd",
-    icon: rgpdIcon,
-    title: "Conformité RGPD",
-    width: 54,
-    height: 60,
-  },
-  {
-    id: "transparent",
-    icon: verifiedIcon,
-    title: "Transparence et engagement",
-    width: 60,
-    height: 60,
-  },
-];
+interface SecuritySectionProps {
+  title: React.ReactNode | string;
+  description: string | React.ReactNode;
+  securityFeatures: {
+    id: string;
+    icon: string;
+    title: string;
+    width: number;
+    height: number;
+  }[];
+}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -59,7 +34,8 @@ const itemVariants = {
   },
 };
 
-export function SecuritySection() {
+export function SecuritySection(props: SecuritySectionProps) {
+  const { title, description, securityFeatures } = props;
   return (
     <section className="py-16 lg:py-24" id="securite">
       <div className="container-oso">
@@ -76,10 +52,10 @@ export function SecuritySection() {
             variants={itemVariants}
           >
             <h2 className="font-heading font-semibold text-[39px] text-gris-70 leading-tight">
-              Vos documents, votre vie privée, Votre contrôle.
+              {title}
             </h2>
             <p className="text-base text-gris-70">
-              La sécurité de vos données n&apos;est pas négociable. On le sait. C&apos;est pour ça qu&apos;on a construit O.S.O avec les standards les plus stricts du marché.
+              {description}
             </p>
           </motion.div>
 
