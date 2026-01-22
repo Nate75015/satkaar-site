@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 // Figma phone mockup asset
 const phoneMockup = "https://www.figma.com/api/mcp/asset/991f759f-c8fd-4b90-802d-fff4389662d8";
 
-export function NewsletterSection({ bgColor = "bg-white" }: { bgColor?: string }) {
+export function NewsletterSection({ bgColor = "bg-white", withBackground = false }: { bgColor?: string, withBackground?: boolean }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -38,12 +38,18 @@ export function NewsletterSection({ bgColor = "bg-white" }: { bgColor?: string }
         >
           {/* Phone Mockup */}
           <motion.div
-            className="relative w-[305px] h-[660px] rounded-[37px] overflow-hidden hidden lg:block"
+            className="relative flex-col items-center justify-center w-[305px] h-[660px] rounded-[37px] overflow-visible hidden lg:flex"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
+            {/* Pink decorative circle */}
+            {withBackground && (
+              <div className="absolute w-[458px] h-[458px] bg-rose-300 rounded-full bottom-0 hidden lg:block"
+                aria-hidden="true" />
+            )}
+            
             <Image
               src={phoneMockup}
               alt="O.S.O App"
@@ -72,7 +78,7 @@ export function NewsletterSection({ bgColor = "bg-white" }: { bgColor?: string }
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 />
-                
+
                 <Input
                   type="email"
                   placeholder="Adresse e-mail"
@@ -80,14 +86,14 @@ export function NewsletterSection({ bgColor = "bg-white" }: { bgColor?: string }
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
                 />
-                
+
                 <Input
                   type="tel"
                   placeholder="Numéro de téléphone (facultatif)"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 />
-                
+
                 <div className="relative">
                   <select
                     className="flex h-[53px] w-full rounded-oso-s border border-gris-20 bg-white px-4 py-[15px] text-base font-body text-gris-40 appearance-none cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-bleu-200 focus:border-bleu-200"
@@ -126,8 +132,8 @@ export function NewsletterSection({ bgColor = "bg-white" }: { bgColor?: string }
                 </label>
               </div>
 
-              <a 
-                href="/confidentialite" 
+              <a
+                href="/confidentialite"
                 className="text-rose-200 text-base underline hover:text-rose-300 transition-colors"
               >
                 Politique de confidentialité

@@ -28,7 +28,7 @@ export const navLinks = [
   { label: "Comment ça marche?", href: "/comment-ca-marche" },
   { label: "Pour qui?", href: "/pour-qui" },
   { label: "Fonctionnalités", href: "/fonctionnalites" },
-  { label: "Sécurité", href: "/#securite" },
+  { label: "Sécurité", href: "/securite" },
 ] as const;
 
 /**
