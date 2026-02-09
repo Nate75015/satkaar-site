@@ -23,7 +23,17 @@ jobs:
 
       - name: Decode GCP credentials
         run: |
+          if [ -z "${{ secrets.GCP_SA_KEY_BASE64 }}" ]; then
+            echo "::error::Secret GCP_SA_KEY_BASE64 is not set!"
+            echo "::error::Add it in Settings → Secrets and variables → Actions"
+            echo "::error::See instructions in DEPLOY.md"
+            exit 1
+          fi
           echo "${{ secrets.GCP_SA_KEY_BASE64 }}" | base64 -d > /tmp/gcp-key.json
+          if [ ! -s /tmp/gcp-key.json ]; then
+            echo "::error::Failed to decode GCP_SA_KEY_BASE64 - file is empty"
+            exit 1
+          fi
           echo "GCP_CREDENTIALS<<EOF" >> $GITHUB_ENV
           cat /tmp/gcp-key.json >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
