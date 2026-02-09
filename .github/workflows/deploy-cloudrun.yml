@@ -23,20 +23,65 @@ jobs:
 
       - name: Decode GCP credentials
         run: |
+          echo "🔍 DEBUG: Checking if GCP_SA_KEY_BASE64 secret exists..."
           if [ -z "${{ secrets.GCP_SA_KEY_BASE64 }}" ]; then
             echo "::error::Secret GCP_SA_KEY_BASE64 is not set. Add it in Settings → Secrets and variables → Actions."
             exit 1
           fi
+          echo "✅ DEBUG: Secret GCP_SA_KEY_BASE64 is present"
+          
+          echo "🔍 DEBUG: Decoding base64 credentials..."
           echo "${{ secrets.GCP_SA_KEY_BASE64 }}" | base64 -d > "$RUNNER_TEMP/gcp-credentials.json"
+          
+          echo "🔍 DEBUG: Checking decoded file size..."
+          FILE_SIZE=$(stat -c%s "$RUNNER_TEMP/gcp-credentials.json" 2>/dev/null || stat -f%z "$RUNNER_TEMP/gcp-credentials.json")
+          echo "📊 DEBUG: Decoded file size: $FILE_SIZE bytes"
+          
           if [ ! -s "$RUNNER_TEMP/gcp-credentials.json" ]; then
             echo "::error::GCP_SA_KEY_BASE64 decode failed or is empty. Check that the secret is valid base64 of the service account JSON."
             exit 1
           fi
+          
+          echo "🔍 DEBUG: Validating JSON structure..."
+          if ! jq empty "$RUNNER_TEMP/gcp-credentials.json" 2>/dev/null; then
+            echo "::error::Decoded credentials is not valid JSON"
+            exit 1
+          fi
+          echo "✅ DEBUG: JSON is valid"
+          
           # Single-line JSON to avoid multiline / delimiter issues in GITHUB_ENV
+          echo "🔍 DEBUG: Creating single-line JSON for environment variable..."
           CREDENTIALS_ONELINE=$(tr -d '\n' < "$RUNNER_TEMP/gcp-credentials.json")
+          
+          echo "📊 DEBUG: Single-line JSON length: ${#CREDENTIALS_ONELINE} characters"
+          
           echo "GCP_CREDENTIALS_JSON<<CREDENTIALS_EOF" >> $GITHUB_ENV
           echo "$CREDENTIALS_ONELINE" >> $GITHUB_ENV
           echo "CREDENTIALS_EOF" >> $GITHUB_ENV
+          
+          echo "✅ DEBUG: GCP_CREDENTIALS_JSON environment variable set successfully"
+
+      - name: Verify credentials before auth
+        run: |
+          echo "🔍 DEBUG: Verifying GCP_CREDENTIALS_JSON is accessible..."
+          if [ -z "$GCP_CREDENTIALS_JSON" ]; then
+            echo "::error::GCP_CREDENTIALS_JSON environment variable is empty!"
+            echo "::error::This means the variable was not properly set in the previous step"
+            exit 1
+          fi
+          echo "✅ DEBUG: GCP_CREDENTIALS_JSON is set (length: ${#GCP_CREDENTIALS_JSON} characters)"
+          
+          # Vérifier que c'est un JSON valide
+          echo "🔍 DEBUG: Validating JSON structure..."
+          if ! echo "$GCP_CREDENTIALS_JSON" | jq empty 2>/dev/null; then
+            echo "::error::GCP_CREDENTIALS_JSON is not valid JSON"
+            exit 1
+          fi
+          
+          # Afficher le type et project_id (sans révéler le reste)
+          echo "📊 DEBUG: Credential type: $(echo "$GCP_CREDENTIALS_JSON" | jq -r '.type // "unknown"')"
+          echo "📊 DEBUG: Project ID: $(echo "$GCP_CREDENTIALS_JSON" | jq -r '.project_id // "unknown"')"
+          echo "✅ DEBUG: Credentials are valid and ready for authentication"
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
