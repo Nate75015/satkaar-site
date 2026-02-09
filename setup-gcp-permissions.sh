@@ -54,6 +54,25 @@ done
 echo "✅ Permissions configurées"
 echo ""
 
+# Créer le repository Artifact Registry si nécessaire
+echo "🔄 Vérification du repository Artifact Registry..."
+if gcloud artifacts repositories describe cloud-run-source-deploy \
+  --location=europe-west1 \
+  --project=$PROJECT_ID \
+  --quiet > /dev/null 2>&1; then
+  echo "✅ Repository 'cloud-run-source-deploy' existe déjà"
+else
+  echo "   → Création du repository 'cloud-run-source-deploy'..."
+  gcloud artifacts repositories create cloud-run-source-deploy \
+    --repository-format=docker \
+    --location=europe-west1 \
+    --description="Repository for Cloud Run source-based deployments" \
+    --project=$PROJECT_ID \
+    --quiet
+  echo "✅ Repository créé"
+fi
+echo ""
+
 # Vérifier les permissions
 echo "📊 Permissions actuelles du compte de service:"
 gcloud projects get-iam-policy $PROJECT_ID \
