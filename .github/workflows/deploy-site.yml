@@ -59,7 +59,7 @@ jobs:
         run: |
           curl -sSfL https://raw.githubusercontent.com/scaleway/scaleway-cli/master/scripts/get.sh | sh
           echo "$HOME/bin" >> $GITHUB_PATH
-          scw -v
+          scw version
 
       - name: Deploy Scaleway Serverless Container (frontend)
         env:
