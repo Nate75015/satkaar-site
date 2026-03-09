@@ -86,6 +86,11 @@ jobs:
 
       - name: Show deployed Scaleway frontend URL
         env:
+          SCW_ACCESS_KEY: ${{ secrets.SCW_REGISTRY_USERNAME }}
+          SCW_SECRET_KEY: ${{ secrets.SCW_REGISTRY_PASSWORD }}
+          SCW_DEFAULT_REGION: ${{ env.SCW_REGION }}
+          SCW_DEFAULT_ORGANIZATION_ID: ${{ secrets.SCW_ORGANIZATION_ID }}
+          SCW_DEFAULT_PROJECT_ID: ${{ secrets.SCW_PROJECT_ID }}
           SCW_FRONTEND_CONTAINER_ID: ${{ secrets.SCW_FRONTEND_CONTAINER_ID }}
         run: |
           if [ -z "$SCW_FRONTEND_CONTAINER_ID" ]; then
